@@ -7,10 +7,10 @@ NY = 'America/New_York'
 
 
 class Entity(object):
-    '''This helper class provides property access (the "dot notation")
+    """This helper class provides property access (the "dot notation")
     to the json object, backed by the original object stored in the _raw
     field.
-    '''
+    """
 
     def __init__(self, raw):
         self._raw = raw
@@ -108,7 +108,7 @@ class BarSet(dict):
 
     @property
     def df(self):
-        '''## Experimental '''
+        """## Experimental """
         if not hasattr(self, '_df'):
             dfs = []
             for symbol, bars in self.items():

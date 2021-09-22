@@ -71,15 +71,15 @@ class StreamConn(object):
                              f'Failed to authenticate: {data}')
 
     async def _next(self):
-        '''Returns the next message available
-        '''
+        """Returns the next message available
+        """
         return await self._stream.__anext__()
 
     async def _recv(self):
-        '''Function used to recieve and parse all messages from websocket stream.
+        """Function used to recieve and parse all messages from websocket stream.
 
         This generator yields one message per each call.
-        '''
+        """
         try:
             while True:
                 r = await self._ws.recv()
@@ -131,14 +131,14 @@ class StreamConn(object):
             raise ConnectionError("Max Retries Exceeded")
 
     async def subscribe(self, channels):
-        '''Subscribe to channels.
+        """Subscribe to channels.
         Note: This is cumulative, meaning you can add channels at runtime,
         and you do not need to specify all the channels.
 
         To remove channels see unsubscribe().
 
         If the necessary connection isn't open yet, it opens now.
-        '''
+        """
         if len(channels) > 0:
             await self._ensure_ws()
             # Join channel list to string
@@ -150,8 +150,8 @@ class StreamConn(object):
             }))
 
     async def unsubscribe(self, channels):
-        '''Unsubscribe from channels
-        '''
+        """Unsubscribe from channels
+        """
         if not self._ws:
             return
         if len(channels) > 0:
@@ -164,9 +164,9 @@ class StreamConn(object):
             }))
 
     def run(self, initial_channels=[]):
-        '''Run forever and block until exception is raised.
+        """Run forever and block until exception is raised.
         initial_channels is the channels to start with.
-        '''
+        """
         loop = self.loop
         try:
             loop.run_until_complete(self.subscribe(initial_channels))
@@ -178,7 +178,7 @@ class StreamConn(object):
             loop.close()
 
     async def close(self):
-        '''Close any open connections'''
+        """Close any open connections"""
         if self._ws is not None:
             await self._ws.close()
         self._ws = None

@@ -23,9 +23,9 @@ class RetryException(Exception):
 
 
 class APIError(Exception):
-    '''Represent API related error.
+    """Represent API related error.
     error.status_code will have http status code.
-    '''
+    """
 
     def __init__(self, error, http_error=None):
         super().__init__(error['message'])
@@ -121,12 +121,12 @@ class REST(object):
                 continue
 
     def _one_request(self, method, url, opts, retry):
-        '''
+        """
         Perform one request, possibly raising RetryException in the case
         the response is 429. Otherwise, if error text contain "code" string,
         then it decodes to json object and returns APIError.
         Returns the body json in the 200 status.
-        '''
+        """
         retry_codes = self._retry_codes
         resp = self._session.request(method, url, **opts)
         try:
@@ -164,12 +164,12 @@ class REST(object):
         )
 
     def get_account(self):
-        '''Get the account'''
+        """Get the account"""
         resp = self.get('/account')
         return Account(resp)
 
     def get_account_configurations(self):
-        '''Get account configs'''
+        """Get account configs"""
         resp = self.get('/account/configurations')
         return AccountConfigurations(resp)
 
@@ -180,7 +180,7 @@ class REST(object):
         trade_confirm_email=None,
         suspend_trade=None
     ):
-        '''Update account configs'''
+        """Update account configs"""
         params = {}
         if no_shorting is not None:
             params['no_shorting'] = no_shorting
@@ -195,10 +195,10 @@ class REST(object):
 
     def list_orders(self, status=None, limit=None, after=None, until=None,
                     direction=None, params=None):
-        '''
+        """
         Get a list of orders
         https://docs.alpaca.markets/web-api/orders/#get-a-list-of-orders
-        '''
+        """
         if params is None:
             params = dict()
         if limit is not None:
@@ -217,7 +217,7 @@ class REST(object):
     def submit_order(self, symbol, qty, side, type, time_in_force,
                      limit_price=None, stop_price=None, client_order_id=None,
                      extended_hours=None):
-        '''Request a new order'''
+        """Request a new order"""
         params = {
             'symbol': symbol,
             'qty': qty,
@@ -237,14 +237,14 @@ class REST(object):
         return Order(resp)
 
     def get_order_by_client_order_id(self, client_order_id):
-        '''Get an order by client order id'''
+        """Get an order by client order id"""
         resp = self.get('/orders:by_client_order_id', {
             'client_order_id': client_order_id,
         })
         return Order(resp)
 
     def get_order(self, order_id):
-        '''Get an order'''
+        """Get an order"""
         resp = self.get('/orders/{}'.format(order_id))
         return Order(resp)
 
@@ -272,33 +272,33 @@ class REST(object):
         return Order(resp)
 
     def cancel_order(self, order_id):
-        '''Cancel an order'''
+        """Cancel an order"""
         self.delete('/orders/{}'.format(order_id))
 
     def cancel_all_orders(self):
-        '''Cancel all open orders'''
+        """Cancel all open orders"""
         self.delete('/orders')
 
     def list_positions(self):
-        '''Get a list of open positions'''
+        """Get a list of open positions"""
         resp = self.get('/positions')
         return [Position(o) for o in resp]
 
     def get_position(self, symbol):
-        '''Get an open position'''
+        """Get an open position"""
         resp = self.get('/positions/{}'.format(symbol))
         return Position(resp)
 
     def close_position(self, symbol):
-        '''Liquidates the position for the given symbol at market price'''
+        """Liquidates the position for the given symbol at market price"""
         self.delete('/positions/{}'.format(symbol))
 
     def close_all_positions(self):
-        '''Liquidates all open positions at market price'''
+        """Liquidates all open positions at market price"""
         self.delete('/positions')
 
     def list_assets(self, status=None, asset_class=None):
-        '''Get a list of assets'''
+        """Get a list of assets"""
         params = {
             'status': status,
             'asset_class': asset_class,
@@ -307,7 +307,7 @@ class REST(object):
         return [Asset(o) for o in resp]
 
     def get_asset(self, symbol):
-        '''Get an asset'''
+        """Get an asset"""
         resp = self.get('/assets/{}'.format(symbol))
         return Asset(resp)
 
@@ -319,11 +319,11 @@ class REST(object):
                    end=None,
                    after=None,
                    until=None):
-        '''Get BarSet(dict[str]->list[Bar])
+        """Get BarSet(dict[str]->list[Bar])
         The parameter symbols can be either a comma-split string
         or a list of string. Each symbol becomes the key of
         the returned value.
-        '''
+        """
         if not isinstance(symbols, str):
             symbols = ','.join(symbols)
         params = {

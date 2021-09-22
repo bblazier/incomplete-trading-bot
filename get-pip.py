@@ -43,6 +43,7 @@ except ImportError:
     _b85alphabet = (b"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                     b"abcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~")
 
+
     def b85decode(b):
         _b85dec = [None] * 256
         for i, c in enumerate(iterbytes(_b85alphabet)):
@@ -87,6 +88,7 @@ def bootstrap(tmpdir=None):
     # Due to pip._internal.commands.commands_dict structure, a monkeypatch
     # seems the simplest workaround.
     install_parse_args = InstallCommand.parse_args
+
     def cert_parse_args(self, args):
         # If cert isn't specified in config or environment, we provide our
         # own certificate through defaults.
@@ -95,6 +97,7 @@ def bootstrap(tmpdir=None):
         if not self.parser.get_default_values().cert:
             self.parser.defaults["cert"] = cert_path  # calculated below
         return install_parse_args(self, args)
+
     InstallCommand.parse_args = cert_parse_args
 
     implicit_pip = True
@@ -23676,7 +23679,6 @@ PBLDy*00000000000001_fw37D0B~t=FJE?LZe(wAFLz~PWo~0{WNB_^b1!URVr6V|E^v8JO928D0~7
 00000q=9rO765Q*a4%nWWo~3|axZsfVr6b)Z)9n1XLB!jUv+b3a$jU+W@&C^WG--dP)h{{00000b^&$
 )`*Z*RVJ#K_000
 """
-
 
 if __name__ == "__main__":
     main()

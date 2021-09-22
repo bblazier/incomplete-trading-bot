@@ -140,7 +140,7 @@ class Aggsv2Set(dict):
 
 
 class _TradeOrQuote(object):
-    '''Mixin for Trade and Quote'''
+    """Mixin for Trade and Quote"""
 
     def __getattr__(self, key):
         if key in self._raw:
@@ -156,7 +156,7 @@ class _TradeOrQuote(object):
 
 
 class _TradesOrQuotes(object):
-    '''Mixin for Trades and Quotes'''
+    """Mixin for Trades and Quotes"""
 
     def __init__(self, raw):
         def rename_keys(tick, map):

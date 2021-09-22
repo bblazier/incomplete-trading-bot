@@ -16,6 +16,7 @@ from pytz import timezone
 # Global object we log to; the handler will work with any log message
 _L = logging.getLogger("demo")
 
+
 # Create a special logger that logs to per-thread-name files
 class MultiHandler(logging.Handler):
     def __init__(self, dirname):
@@ -57,6 +58,7 @@ class MultiHandler(logging.Handler):
         except:
             self.handleError(record)
 
+
 def clean_open_orders(api):
     # First, cancel any existing orders so they don't impact our buying power.
     orders = api.list_orders(status="open")
@@ -65,18 +67,18 @@ def clean_open_orders(api):
     print('%i orders were found open' % int(len(orders)))
 
     for order in orders:
-      api.cancel_order(order.id)
+        api.cancel_order(order.id)
+
 
 def check_account_ok(api):
-
     account = api.get_account()
     if account.account_blocked or account.trading_blocked or account.transfers_blocked:
-
         print('OJO, account blocked. WTF?')
-        import pdb; pdb.set_trace()
+        import pdb
+        pdb.set_trace()
 
-def run_tbot(_L,assHand,account):
 
+def run_tbot(_L, assHand, account):
     # initialize trader object
     trader = Trader(gvars.API_KEY, gvars.API_SECRET_KEY, _L, account)
 
@@ -85,15 +87,15 @@ def run_tbot(_L,assHand,account):
         ticker = assHand.find_target_asset()
         stock = Stock(ticker)
 
-        ticker,lock = trader.run(stock) # run the trading program
+        ticker, lock = trader.run(stock)  # run the trading program
 
-        if lock: # if the trend is not favorable, lock it temporarily
+        if lock:  # if the trend is not favorable, lock it temporarily
             assHand.lock_asset(ticker)
         else:
             assHand.make_asset_available(ticker)
 
-def main():
 
+def main():
     # Set up a basic stderr logging; this is nothing fancy.
     log_format = '%(asctime)s %(threadName)12s: %(lineno)-4d %(message)s'
     stderr_handler = logging.StreamHandler()
@@ -120,20 +122,21 @@ def main():
     # get the Alpaca account ready
     try:
         _L.info("Getting account")
-        check_account_ok(api) # check if it is ok to trade
+        check_account_ok(api)  # check if it is ok to trade
         account = api.get_account()
-        clean_open_orders(api) # clean all the open orders
+        clean_open_orders(api)  # clean all the open orders
         _L.info("Got it")
     except Exception as e:
         _L.info(str(e))
 
-    for thread in range(gvars.MAX_WORKERS): # this will launch the threads
-        worker = 'th' + str(thread) # establishing each worker name
+    for thread in range(gvars.MAX_WORKERS):  # this will launch the threads
+        worker = 'th' + str(thread)  # establishing each worker name
 
-        worker = threading.Thread(name=worker,target=run_tbot,args=(_L,assHand,account))
-        worker.start() # it runs a run_tbot function, declared here as well
+        worker = threading.Thread(name=worker, target=run_tbot, args=(_L, assHand, account))
+        worker.start()  # it runs a run_tbot function, declared here as well
 
         time.sleep(1)
+
 
 if __name__ == '__main__':
     main()

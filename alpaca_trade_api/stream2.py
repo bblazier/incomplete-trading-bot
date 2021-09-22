@@ -26,7 +26,7 @@ class StreamConn(object):
         try:
             self.loop = asyncio.get_event_loop()
         except websockets.WebSocketException as wse:
-            logging.warn(wse)
+            logging.warning(wse)
             self.loop = asyncio.new_event_loop()
             asyncio.set_event_loop(self.loop)
 
@@ -69,7 +69,7 @@ class StreamConn(object):
                 if stream is not None:
                     await self._dispatch(stream, msg)
         except websockets.WebSocketException as wse:
-            logging.warn(wse)
+            logging.warning(wse)
             await self.close()
             asyncio.ensure_future(self._ensure_ws())
 
@@ -95,7 +95,7 @@ class StreamConn(object):
                     await self.subscribe(self._streams)
                 break
             except websockets.WebSocketException as wse:
-                logging.warn(wse)
+                logging.warning(wse)
                 self._ws = None
                 self._retries += 1
                 await asyncio.sleep(self._retry_wait * self._retry)
@@ -103,9 +103,9 @@ class StreamConn(object):
             raise ConnectionError("Max Retries Exceeded")
 
     async def subscribe(self, channels):
-        '''Start subscribing to channels.
+        """Start subscribing to channels.
         If the necessary connection isn't open yet, it opens now.
-        '''
+        """
         ws_channels = []
         polygon_channels = []
         for c in channels:
@@ -129,8 +129,8 @@ class StreamConn(object):
             await self.polygon.subscribe(polygon_channels)
 
     async def unsubscribe(self, channels):
-        '''Handle un-subscribing from channels.
-        '''
+        """Handle un-subscribing from channels.
+        """
         if not self._ws:
             return
 
@@ -151,9 +151,9 @@ class StreamConn(object):
             await self.polygon.unsubscribe(polygon_channels)
 
     def run(self, initial_channels=[]):
-        '''Run forever and block until exception is raised.
+        """Run forever and block until exception is raised.
         initial_channels is the channels to start with.
-        '''
+        """
         loop = self.loop
         try:
             loop.run_until_complete(self.subscribe(initial_channels))
@@ -165,7 +165,7 @@ class StreamConn(object):
             loop.close()
 
     async def close(self):
-        '''Close any of open connections'''
+        """Close any of open connections"""
         if self._ws is not None:
             await self._ws.close()
             self._ws = None
